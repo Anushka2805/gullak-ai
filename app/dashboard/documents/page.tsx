@@ -1,28 +1,69 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
+type DocumentItem = {
+  id: string;
+  name: string;
+};
+
 export default function DocumentsPage() {
-  const docs = ["Insurance.pdf", "BankStatement.pdf", "PANCard.png"];
+  const [docs, setDocs] = useState<DocumentItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchDocs = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch("/api/documents");
+        if (!res.ok) throw new Error("Failed to fetch documents");
+        const data = await res.json();
+        setDocs(data);
+      } catch (err) {
+        setError("Could not load documents.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDocs();
+  }, []);
+
+  if (loading) {
+    return <p className="text-lg font-semibold">Loading documents...</p>;
+  }
+
+  if (error) {
+    return <p className="text-red-600 font-semibold">{error}</p>;
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#FFF7E6] via-white to-[#FFF2D6] p-8 text-slate-900">
-      <div className="max-w-5xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6">Documents</h1>
+    <div>
+      <h1 className="text-3xl font-bold mb-6">Documents</h1>
 
+      {docs.length === 0 ? (
+        <div className="bg-white p-8 rounded-2xl border border-yellow-200 shadow text-center">
+          <p className="text-lg font-semibold">
+            No documents uploaded yet. Upload your first document.
+          </p>
+        </div>
+      ) : (
         <div className="grid md:grid-cols-3 gap-6">
-          {docs.map((d, i) => (
+          {docs.map((d) => (
             <div
-              key={i}
+              key={d.id}
               className="bg-white p-6 rounded-2xl border border-yellow-200 shadow"
             >
-              <p className="font-semibold">{d}</p>
+              <p className="font-semibold">{d.name}</p>
             </div>
           ))}
         </div>
+      )}
 
-        <button className="mt-8 bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-6 py-3 rounded-xl font-semibold shadow">
-          Upload Document
-        </button>
-      </div>
+      <button className="mt-8 bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-6 py-3 rounded-xl font-semibold shadow">
+        Upload Document
+      </button>
     </div>
   );
 }

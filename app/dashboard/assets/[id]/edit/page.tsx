@@ -1,44 +1,46 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter, useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import Toast from "@/components/Toast";
 
-export default function NewAssetPage() {
+export default function EditAssetPage() {
   const router = useRouter();
+  const params = useParams();
+  const id = params.id as string;
 
   const [name, setName] = useState("");
   const [type, setType] = useState("Bank");
-  const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [toast, setToast] = useState<{ msg: string; type: "success" | "error" | "info" } | null>(null);
+
+  useEffect(() => {
+    const fetchAsset = async () => {
+      const res = await fetch(`/api/assets/${id}`);
+      const data = await res.json();
+      setName(data.name);
+      setType(data.type);
+    };
+    fetchAsset();
+  }, [id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
-
-    if (!name) {
-      setError("Asset name is required");
-      return;
-    }
 
     try {
       setLoading(true);
-      const res = await fetch("/api/assets", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name, type, notes }),
+      const res = await fetch(`/api/assets/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, type }),
       });
 
-      if (!res.ok) {
-        throw new Error("Failed to save asset");
-      }
+      if (!res.ok) throw new Error("Update failed");
 
-      // On success, go back to assets list
-      router.push("/dashboard/assets");
-    } catch (err) {
-      setError("Could not save asset. Try again.");
+      setToast({ msg: "Asset updated successfully", type: "success" });
+      setTimeout(() => router.push("/dashboard/assets"), 1000);
+    } catch {
+      setToast({ msg: "Could not update asset", type: "error" });
     } finally {
       setLoading(false);
     }
@@ -46,18 +48,23 @@ export default function NewAssetPage() {
 
   return (
     <div className="max-w-xl bg-white p-8 rounded-3xl shadow border border-yellow-200">
-      <h1 className="text-2xl font-bold mb-6">Add New Asset</h1>
+      {toast && (
+        <Toast
+          message={toast.msg}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
+
+      <h1 className="text-2xl font-bold mb-6">Edit Asset</h1>
 
       <form onSubmit={handleSubmit} className="space-y-5">
-        {error && <p className="text-red-600 font-semibold">{error}</p>}
-
         <div>
           <label className="block font-medium mb-1">Asset Name</label>
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
             className="w-full border border-slate-300 rounded-xl px-4 py-3"
-            placeholder="e.g. HDFC Bank Account"
           />
         </div>
 
@@ -75,22 +82,12 @@ export default function NewAssetPage() {
           </select>
         </div>
 
-        <div>
-          <label className="block font-medium mb-1">Notes</label>
-          <textarea
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            className="w-full border border-slate-300 rounded-xl px-4 py-3"
-            placeholder="Optional notes"
-          />
-        </div>
-
         <button
           type="submit"
           disabled={loading}
           className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 text-white py-3 rounded-xl font-semibold shadow disabled:opacity-70"
         >
-          {loading ? "Saving..." : "Save Asset"}
+          {loading ? "Saving..." : "Save Changes"}
         </button>
       </form>
     </div>

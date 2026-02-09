@@ -1,27 +1,33 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
+    // Mock auth success
     setTimeout(() => {
+      localStorage.setItem("isLoggedIn", "true");
+      // derive a simple name from email for demo
+      const name = email ? email.split("@")[0] : "User";
+      localStorage.setItem("userName", name);
       setLoading(false);
-      alert("Logged in (connect backend later)");
-    }, 1200);
+      router.push("/dashboard");
+    }, 800);
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#FFF7E6] via-white to-[#FFF2D6] flex items-center justify-center px-6">
       <div className="w-full max-w-md">
-        {/* Card */}
         <div className="bg-white rounded-3xl shadow-2xl border border-yellow-200 p-8">
-          {/* Logo */}
           <div className="flex flex-col items-center mb-6">
             <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center text-white font-bold text-xl shadow-md mb-2">
               ₹
@@ -34,7 +40,6 @@ export default function LoginPage() {
             </p>
           </div>
 
-          {/* Form */}
           <form onSubmit={handleLogin} className="space-y-5">
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">
@@ -43,6 +48,8 @@ export default function LoginPage() {
               <input
                 type="email"
                 required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
                 className="w-full px-4 py-3 rounded-xl border border-slate-300 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 transition"
               />
@@ -60,19 +67,6 @@ export default function LoginPage() {
               />
             </div>
 
-            <div className="flex items-center justify-between text-sm">
-              <label className="flex items-center gap-2 text-slate-700">
-                <input type="checkbox" className="rounded border-slate-400" />
-                Remember me
-              </label>
-              <a
-                href="#"
-                className="text-yellow-600 hover:text-yellow-700 font-semibold"
-              >
-                Forgot password?
-              </a>
-            </div>
-
             <button
               type="submit"
               disabled={loading}
@@ -82,7 +76,6 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* Footer */}
           <p className="text-center text-sm text-slate-700 mt-6">
             Don’t have an account?{" "}
             <Link

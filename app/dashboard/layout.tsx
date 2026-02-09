@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function DashboardLayout({
   children,
@@ -9,6 +10,21 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const [userName, setUserName] = useState("User");
+
+  // Auth guard + load user name
+  useEffect(() => {
+    const isLoggedIn = localStorage.getItem("isLoggedIn");
+    if (isLoggedIn !== "true") {
+      router.push("/login");
+      return;
+    }
+
+    const name = localStorage.getItem("userName") || "User";
+    setUserName(name);
+  }, [router]);
 
   const navItems = [
     { name: "Dashboard", href: "/dashboard" },
@@ -20,6 +36,12 @@ export default function DashboardLayout({
 
   const pageTitle =
     navItems.find((n) => pathname.startsWith(n.href))?.name || "Dashboard";
+
+  const handleLogout = () => {
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("userName");
+    router.push("/login");
+  };
 
   return (
     <div className="min-h-screen flex bg-gradient-to-b from-[#FFF7E6] via-white to-[#FFF2D6] text-slate-900">
@@ -33,7 +55,7 @@ export default function DashboardLayout({
           <span className="text-xl font-bold">Gullak</span>
         </div>
 
-        {/* Nav */}
+        {/* Navigation */}
         <nav className="flex-1 p-4 space-y-2">
           {navItems.map((item) => {
             const active = pathname === item.href;
@@ -55,7 +77,10 @@ export default function DashboardLayout({
 
         {/* Footer */}
         <div className="p-4 border-t border-yellow-200">
-          <button className="w-full text-left px-4 py-2 rounded-xl font-semibold text-red-600 hover:bg-red-50">
+          <button
+            onClick={handleLogout}
+            className="w-full text-left px-4 py-2 rounded-xl font-semibold text-red-600 hover:bg-red-50"
+          >
             Logout
           </button>
         </div>
@@ -66,10 +91,11 @@ export default function DashboardLayout({
         {/* Top Bar */}
         <header className="h-16 bg-white/80 backdrop-blur border-b border-yellow-200 flex items-center justify-between px-8">
           <h1 className="text-xl font-bold">{pageTitle}</h1>
+
           <div className="flex items-center gap-3">
-            <span className="font-semibold text-slate-900">Anushka</span>
+            <span className="font-semibold">{userName}</span>
             <div className="h-9 w-9 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center text-white font-bold">
-              A
+              {userName.charAt(0).toUpperCase()}
             </div>
           </div>
         </header>
