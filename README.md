@@ -1,37 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🪙 Gullak – Digital Financial Legacy Platform
 
-## Getting Started
+Gullak helps families securely access a person’s financial assets and documents
+in case of death or long-term inactivity.
 
-First, run the development server:
+## 🚀 Problem
+After a person passes away, families often struggle to:
+- Know where investments are
+- Find insurance / bank documents
+- Access accounts legally & safely
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 💡 Solution
+Gullak provides:
+- Centralized asset & document tracking
+- Nominee-based read-only access
+- Automated inactivity-based access trigger
+- Secure & ethical data handling
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🛠 Tech Stack
+- **Frontend:** Next.js (App Router), Tailwind CSS
+- **Backend:** Next.js API Routes
+- **Database:** MongoDB + Mongoose
+- **Storage:** Local (MVP), extendable to S3/Firebase
+- **Automation:** Cron-ready inactivity trigger
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## ✨ Features
+- User asset management (Bank, Insurance, Investments)
+- Document vault with uploads
+- Nominee management
+- Inactivity / death trigger
+- Read-only nominee access
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🧪 Demo Flow
+1. User adds assets & documents  
+2. User adds nominee  
+3. System detects inactivity  
+4. Nominee gets read-only access  
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 🧑‍🤝‍🧑 Team
+- **Person 1:** Frontend & UI/UX
+- **Person 2:** Backend, APIs & Automation
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# gullak-ai
+## 📌 Status
+MVP Complete ✅  
+Future upgrades: Auth, Email notifications, Account Aggregator APIs
