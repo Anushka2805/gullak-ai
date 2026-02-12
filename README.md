@@ -44,12 +44,6 @@ Gullak provides:
 
 ---
 
-## 🧑‍🤝‍🧑 Team
-- **Person 1:** Frontend & UI/UX
-- **Person 2:** Backend, APIs & Automation
-
----
-
 ## 📌 Status
 MVP Complete ✅  
 Future upgrades: Auth, Email notifications, Account Aggregator APIs
