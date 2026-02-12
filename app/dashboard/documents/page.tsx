@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type DocumentItem = {
   id: string;
@@ -11,24 +11,59 @@ export default function DocumentsPage() {
   const [docs, setDocs] = useState<DocumentItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [uploading, setUploading] = useState(false);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const fetchDocs = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch("/api/documents");
+      if (!res.ok) throw new Error("Failed to fetch documents");
+      const data = await res.json();
+      setDocs(data);
+    } catch (err) {
+      setError("Could not load documents.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchDocs = async () => {
-      try {
-        setLoading(true);
-        const res = await fetch("/api/documents");
-        if (!res.ok) throw new Error("Failed to fetch documents");
-        const data = await res.json();
-        setDocs(data);
-      } catch (err) {
-        setError("Could not load documents.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchDocs();
   }, []);
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("name", file.name);
+
+    try {
+      setUploading(true);
+      const res = await fetch("/api/documents", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) throw new Error("Upload failed");
+
+      // refresh list
+      await fetchDocs();
+    } catch (err) {
+      alert("Failed to upload document");
+    } finally {
+      setUploading(false);
+    }
+  };
 
   if (loading) {
     return <p className="text-lg font-semibold">Loading documents...</p>;
@@ -61,8 +96,20 @@ export default function DocumentsPage() {
         </div>
       )}
 
-      <button className="mt-8 bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-6 py-3 rounded-xl font-semibold shadow">
-        Upload Document
+      {/* Hidden file input */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        className="hidden"
+        onChange={handleFileChange}
+      />
+
+      <button
+        onClick={handleUploadClick}
+        disabled={uploading}
+        className="mt-8 bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-6 py-3 rounded-xl font-semibold shadow disabled:opacity-60"
+      >
+        {uploading ? "Uploading..." : "Upload Document"}
       </button>
     </div>
   );
