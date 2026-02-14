@@ -4,7 +4,14 @@ export interface IAsset {
   _id: mongoose.Types.ObjectId;
   userId: mongoose.Types.ObjectId;
   name: string;
-  type: "Bank" | "Insurance" | "Investment" | "Other";
+type:
+  | "Bank"
+  | "Insurance"
+  | "Investment"
+  | "Property"
+  | "Gold"
+  | "FD"
+  | "Other";
   notes?: string;
   createdAt: Date;
 }
@@ -26,7 +33,7 @@ const AssetSchema = new Schema<IAsset>(
 
     type: {
       type: String,
-      enum: ["Bank", "Insurance", "Investment", "Other"],
+enum: ["Bank", "Insurance", "Investment", "Property", "Gold", "FD", "Other"],
       required: true,
     },
 

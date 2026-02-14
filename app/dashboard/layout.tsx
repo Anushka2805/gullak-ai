@@ -32,6 +32,7 @@ export default function DashboardLayout({
     { name: "Nominees", href: "/dashboard/nominees" },
     { name: "Documents", href: "/dashboard/documents" },
     { name: "Settings", href: "/dashboard/settings" },
+    { name: "Email Scanner", href: "/dashboard/email-scan" },
   ];
 
   const pageTitle =
