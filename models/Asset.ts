@@ -1,22 +1,26 @@
-import mongoose, { Schema, models, model } from "mongoose";
+import mongoose, { Schema, models, model, Types } from "mongoose";
 
-export interface IAsset {
-  _id: mongoose.Types.ObjectId;
-  userId: mongoose.Types.ObjectId;
+/* ---------------- TYPES ---------------- */
+
+export interface AssetDocument {
+  _id: Types.ObjectId;
+  userId: Types.ObjectId;
   name: string;
-type:
-  | "Bank"
-  | "Insurance"
-  | "Investment"
-  | "Property"
-  | "Gold"
-  | "FD"
-  | "Other";
+  type:
+    | "Bank"
+    | "Insurance"
+    | "Investment"
+    | "Property"
+    | "Gold"
+    | "FD"
+    | "Other";
   notes?: string;
   createdAt: Date;
 }
 
-const AssetSchema = new Schema<IAsset>(
+/* ---------------- SCHEMA ---------------- */
+
+const AssetSchema = new Schema<AssetDocument>(
   {
     userId: {
       type: Schema.Types.ObjectId,
@@ -33,7 +37,15 @@ const AssetSchema = new Schema<IAsset>(
 
     type: {
       type: String,
-enum: ["Bank", "Insurance", "Investment", "Property", "Gold", "FD", "Other"],
+      enum: [
+        "Bank",
+        "Insurance",
+        "Investment",
+        "Property",
+        "Gold",
+        "FD",
+        "Other",
+      ],
       required: true,
     },
 
@@ -46,7 +58,11 @@ enum: ["Bank", "Insurance", "Investment", "Property", "Gold", "FD", "Other"],
   }
 );
 
+/* ---------------- MODEL ---------------- */
+
 // Prevent model overwrite in dev
-const Asset = models.Asset || model<IAsset>("Asset", AssetSchema);
+const Asset =
+  (models.Asset as mongoose.Model<AssetDocument>) ||
+  model<AssetDocument>("Asset", AssetSchema);
 
 export default Asset;

@@ -5,6 +5,11 @@ import { useEffect, useRef, useState } from "react";
 type DocumentItem = {
   id: string;
   name: string;
+  asset?: {
+    id: string;
+    name: string;
+    type: string;
+  } | null;
 };
 
 export default function DocumentsPage() {
@@ -37,9 +42,7 @@ export default function DocumentsPage() {
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = async (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -90,7 +93,27 @@ export default function DocumentsPage() {
               key={d.id}
               className="bg-white p-6 rounded-2xl border border-yellow-200 shadow"
             >
-              <p className="font-semibold">{d.name}</p>
+              <p className="font-semibold text-slate-800">{d.name}</p>
+
+              {d.asset && (
+                <div className="mt-4 p-4 rounded-xl bg-yellow-50 border border-yellow-300">
+                  <p className="text-sm font-semibold text-yellow-700">
+                    🤖 AI Detected Asset
+                  </p>
+
+                  <p className="text-sm text-slate-700 mt-1">
+                    <b>Type:</b> {d.asset.type}
+                  </p>
+
+                  <p className="text-sm text-slate-700">
+                    <b>Asset:</b> {d.asset.name}
+                  </p>
+
+                  <p className="text-xs text-green-600 mt-1">
+                    Automatically linked to Assets
+                  </p>
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -103,7 +126,6 @@ export default function DocumentsPage() {
         className="hidden"
         onChange={handleFileChange}
       />
-
 
       <button
         onClick={handleUploadClick}
