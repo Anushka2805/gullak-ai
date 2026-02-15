@@ -108,9 +108,9 @@ export default function HomePage() {
           </motion.p>
 
           <motion.div
-  variants={fadeUp}
-  className="flex flex-row gap-6 justify-center items-center"
->
+            variants={fadeUp}
+            className="flex flex-row gap-6 justify-center items-center"
+          >
 
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}>
               <Link
